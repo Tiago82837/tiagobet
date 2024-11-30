@@ -1,0 +1,897 @@
+<html><head><base href="/" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BetSports - Apostas Esportivas</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+:root {
+  --primary: #2ecc71;
+  --secondary: #3498db;
+  --dark: #2c3e50;
+  --warning: #e74c3c;
+}
+
+body {
+  min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar {
+  background-color: var(--dark);
+  padding: 15px 0;
+}
+
+.bet-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  transition: transform 0.2s;
+}
+
+.bet-card:hover {
+  transform: translateY(-5px);
+}
+
+.odds {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-bet {
+  padding: 12px;
+  text-align: center;
+  background: linear-gradient(145deg, var(--primary) 0%, #27ae60 100%);
+  color: white;
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn-bet:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}
+
+.betslip {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  width: 300px;
+  background: white;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.balance-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.balance {
+  padding: 8px 15px;
+  border-radius: 5px;
+  background: var(--secondary);
+  color: white;
+  font-weight: 500;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+}
+
+.auth-content {
+  background: white;
+  border-radius: 10px;
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.hide-auth {
+  display: none !important;
+}
+
+.search-container {
+  margin: 20px 0;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 15px;
+  border: 2px solid var(--primary);
+  border-radius: 25px;
+  outline: none;
+}
+
+.search-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary);
+}
+
+.admin-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2100;
+  width: 100%;
+  max-width: 400px;
+  background: transparent;
+}
+
+.admin-panel .card {
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.how-to-bet {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+.age-warning {
+  background: var(--warning);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .betslip {
+    width: 100%;
+    right: 0;
+    height: auto;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  
+  .container {
+    padding-bottom: 200px;
+  }
+  
+  .bet-card .btn-bet {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+}
+
+.list-group-heading {
+  margin-bottom: 0;
+  border-radius: 5px 5px 0 0;
+}
+
+.list-group-item {
+  cursor: pointer;
+  border-left: 4px solid transparent;
+  transition: all 0.3s;
+}
+
+.list-group-item:hover {
+  border-left: 4px solid var(--primary);
+  background-color: #f8f9fa;
+}
+
+.list-group-item.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.list-group {
+  margin-bottom: 20px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  border-radius: 5px;
+}
+
+#infoSection {
+  transition: all 0.3s ease;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="https://tiagobets.com">
+      <svg width="30" height="30" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="var(--primary)"/>
+        <text x="50" y="65" text-anchor="middle" fill="white" font-size="40">TB</text>
+      </svg>
+      TiagoBets
+    </a>
+    <button class="btn btn-link text-white ms-2" onclick="showAdminLogin()" style="font-size: 0.8rem;">
+      <i class="fas fa-cog"></i>
+    </button>
+    <div class="ml-auto d-flex align-items-center">
+      <div id="user-area" class="hide-auth">
+        <div class="balance-container">
+          <div class="balance">
+            Saldo: R$ <span id="balance">0.00</span>
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-success btn-sm" onclick="showDeposit()">
+              <i class="fas fa-plus-circle"></i> Depositar
+            </button>
+            <button class="btn btn-warning btn-sm" onclick="showWithdraw()">
+              <i class="fas fa-minus-circle"></i> Sacar
+            </button>
+            <button class="btn btn-outline-light btn-sm" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="guest-area">
+        <button class="btn btn-outline-light" onclick="showLogin()">Login</button>
+        <button class="btn btn-outline-light ms-2" onclick="showRegister()">Cadastro</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <div class="col-md-3">
+    <div class="list-group mb-4">
+      <h5 class="list-group-heading p-3 bg-dark text-white rounded-top mb-0">Menu Principal</h5>
+      <button class="list-group-item active">Futebol</button>
+      <button class="list-group-item">Basquete</button>
+      <button class="list-group-item">Tênis</button>
+      <button class="list-group-item">MMA</button>
+    </div>
+
+    <div class="list-group">
+      <h5 class="list-group-heading p-3 bg-dark text-white rounded-top mb-0">Minha Conta</h5>
+      <button class="list-group-item" onclick="showMyBets()">Minhas Apostas</button>
+      <button class="list-group-item" onclick="showTransactions()">Histórico de Transações</button>
+      <button class="list-group-item" onclick="toggleInfoSection()">
+        <i class="fas fa-exclamation-triangle"></i> Informações e Avisos
+      </button>
+    </div>
+  </div>
+
+  <div class="col-md-9">
+    <div id="infoSection" style="display: none;">
+      <div class="age-warning">
+        <strong>⚠️ AVISO:</strong> Este site é destinado apenas para maiores de 18 anos.
+      </div>
+      
+      <div class="how-to-bet">
+        <h4>Como Apostar</h4>
+        <ol>
+          <li>Faça login ou cadastre-se para começar</li>
+          <li>Certifique-se de ter saldo disponível em sua conta</li>
+          <li>Escolha os jogos que deseja apostar</li>
+          <li>Selecione suas odds clicando nos botões (Casa, Empate ou Visitante)</li>
+          <li>Digite o valor que deseja apostar no campo específico</li>
+          <li>Clique em "Confirmar Apostas" para finalizar</li>
+        </ol>
+        <p><strong>Nota:</strong> Aposte com responsabilidade e apenas valores que você pode perder.</p>
+      </div>
+    </div>
+
+    <div class="search-container">
+      <input type="text" 
+             class="search-input" 
+             id="searchGames" 
+             placeholder="Pesquisar jogos...">
+      <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+    </div>
+    <div class="row" id="matches">
+      <!-- Matches will be generated here -->
+    </div>
+  </div>
+</div>
+
+<div class="betslip p-3">
+  <h5>Minhas Apostas</h5>
+  <div id="betslip-items">
+    <!-- Bet items will appear here -->
+  </div>
+  <div class="mt-3">
+    <input type="number" class="form-control mb-2" id="bet-amount" placeholder="Valor da aposta">
+    <button class="btn btn-bet w-100" onclick="placeBet()">Confirmar Apostas</button>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel" style="display: none;">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Painel Administrativo</h4>
+      <button type="button" class="btn-close" onclick="closeAdminPanel()"></button>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label">Alterar Saldo</label>
+        <input type="number" class="form-control" id="adminBalance">
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" onclick="updateUserBalance()">Atualizar Saldo</button>
+        <button class="btn btn-secondary" onclick="closeAdminPanel()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="auth-modal" id="loginModal">
+  <div class="auth-content">
+    <h4>Login</h4>
+    <form onsubmit="handleLogin(event)">
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" id="loginEmail" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Senha</label>
+        <input type="password" class="form-control" id="loginPassword" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+      <button type="button" class="btn btn-secondary" onclick="document.getElementById('loginModal').style.display='none'">Fechar</button>
+    </form>
+  </div>
+</div>
+
+<div class="auth-modal" id="registerModal">
+  <div class="auth-content">
+    <h4>Cadastro</h4>
+    <form onsubmit="handleRegister(event)">
+      <div class="mb-3">
+        <label class="form-label">Nome</label>
+        <input type="text" class="form-control" id="registerName" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" id="registerEmail" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Senha</label>
+        <input type="password" class="form-control" id="registerPassword" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Cadastrar</button>
+      <button type="button" class="btn btn-secondary" onclick="document.getElementById('registerModal').style.display='none'">Fechar</button>
+    </form>
+  </div>
+</div>
+
+<div class="auth-modal" id="depositModal">
+  <div class="auth-content">
+    <h4>Depositar</h4>
+    <div class="text-center mb-3">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020101021126360014br.gov.bcb.pix0114%2B55889984885825204000053039865802BR5915FRANCISCA%20SILVA6005JUCAS62070503***6304B26B" 
+           alt="QR Code Pix" 
+           class="img-fluid">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Chave Pix:</label>
+      <div class="input-group">
+        <input type="text" 
+               class="form-control" 
+               value="00020101021126360014br.gov.bcb.pix0114+55889984885825204000053039865802BR5915FRANCISCA SILVA6005JUCAS62070503***6304B26B" 
+               id="pixKey" 
+               readonly>
+        <button class="btn btn-primary" onclick="copyPixKey()">Copiar</button>
+      </div>
+    </div>
+    <button class="btn btn-secondary" onclick="document.getElementById('depositModal').style.display='none'">Fechar</button>
+  </div>
+</div>
+
+<div class="auth-modal" id="withdrawModal">
+  <div class="auth-content">
+    <h4>Sacar</h4>
+    <p>Saldo disponível: R$ <span id="withdrawBalance">0.00</span></p>
+    <div class="mb-3">
+      <label class="form-label">Tipo de Chave Pix</label>
+      <select class="form-select" id="pixKeyType">
+        <option value="cpf">CPF</option>
+        <option value="celular">Celular</option>
+        <option value="email">Email</option>
+        <option value="aleatoria">Chave Aleatória</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Chave Pix</label>
+      <input type="text" class="form-control" id="withdrawPixKey" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Valor</label>
+      <input type="number" class="form-control" id="withdrawAmount" required>
+    </div>
+    <button class="btn btn-primary" onclick="requestWithdraw()">Solicitar Saque</button>
+    <button class="btn btn-secondary" onclick="document.getElementById('withdrawModal').style.display='none'">Fechar</button>
+  </div>
+</div>
+
+<script>
+let currentUser = null; // Store current logged in user
+let userBets = [];
+let transactionHistory = [];
+let selectedBets = [];
+
+// User management functions
+function handleLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  
+  // Simple login simulation
+  currentUser = {
+    email: email,
+    balance: 0.00,
+    name: email.split('@')[0]
+  };
+
+  // Update UI for logged in state
+  document.getElementById('loginModal').style.display = 'none';
+  document.getElementById('guest-area').style.display = 'none';
+  document.getElementById('user-area').classList.remove('hide-auth');
+  document.getElementById('balance').textContent = currentUser.balance.toFixed(2);
+}
+
+function handleRegister(event) {
+  event.preventDefault();
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  const name = document.getElementById('registerName').value;
+
+  // Simple register simulation
+  currentUser = {
+    email: email,
+    name: name,
+    balance: 0.00
+  };
+
+  // Update UI for logged in state
+  document.getElementById('registerModal').style.display = 'none';
+  document.getElementById('guest-area').style.display = 'none';
+  document.getElementById('user-area').classList.remove('hide-auth');
+  document.getElementById('balance').textContent = currentUser.balance.toFixed(2);
+}
+
+function logout() {
+  currentUser = null;
+  selectedBets = [];
+  updateBetslip();
+  
+  // Update UI for logged out state
+  document.getElementById('guest-area').style.display = 'block';
+  document.getElementById('user-area').classList.add('hide-auth');
+}
+
+function showLogin() {
+  document.getElementById('loginModal').style.display = 'block';
+}
+
+function showRegister() {
+  document.getElementById('registerModal').style.display = 'block';
+}
+
+// Admin login
+function showAdminLogin() {
+  const password = prompt("Digite a senha de administrador:");
+  if (password === "170121") {
+    document.getElementById('adminPanel').style.display = 'block';
+  } else {
+    alert("Senha incorreta!");
+  }
+}
+
+function updateUserBalance() {
+  if (currentUser) {
+    const newBalance = parseFloat(document.getElementById('adminBalance').value);
+    if (!isNaN(newBalance)) {
+      currentUser.balance = newBalance;
+      document.getElementById('balance').textContent = newBalance.toFixed(2);
+    }
+  }
+  closeAdminPanel();
+}
+
+function closeAdminPanel() {
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminBalance').value = '';
+}
+
+// New functions added
+function showDeposit() {
+  document.getElementById('withdrawModal').style.display = 'none';
+  document.getElementById('depositModal').style.display = 'block';
+}
+
+function showWithdraw() {
+  if (!currentUser) {
+    alert('Por favor, faça login primeiro');
+    return;
+  }
+  
+  document.getElementById('depositModal').style.display = 'none';
+  document.getElementById('withdrawModal').style.display = 'block';
+  document.getElementById('withdrawBalance').textContent = currentUser.balance.toFixed(2);
+}
+
+function copyPixKey() {
+  const pixKey = document.getElementById('pixKey');
+  pixKey.select();
+  document.execCommand('copy');
+  alert('Chave Pix copiada!');
+}
+
+function requestWithdraw() {
+  if (!currentUser) {
+    alert('Por favor, faça login primeiro');
+    return;
+  }
+
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+  const pixKey = document.getElementById('withdrawPixKey').value;
+  const pixType = document.getElementById('pixKeyType').value;
+
+  if (!amount || amount <= 0) {
+    alert('Por favor, insira um valor válido');
+    return;
+  }
+
+  if (!pixKey) {
+    alert('Por favor, insira uma chave Pix');
+    return;
+  }
+
+  if (amount > currentUser.balance) {
+    alert('Saldo insuficiente para realizar este saque');
+    return;
+  }
+
+  // Add to transaction history
+  transactionHistory.push({
+    id: Date.now(),
+    type: 'Saque',
+    amount: -amount,
+    date: new Date().toLocaleString(),
+    description: `Saque via Pix (${pixType})`
+  });
+
+  // Update balance
+  currentUser.balance -= amount;
+  document.getElementById('balance').textContent = currentUser.balance.toFixed(2);
+  document.getElementById('withdrawBalance').textContent = currentUser.balance.toFixed(2);
+
+  // Clear form
+  document.getElementById('withdrawAmount').value = '';
+  document.getElementById('withdrawPixKey').value = '';
+
+  // Hide modal and show success message
+  document.getElementById('withdrawModal').style.display = 'none';
+  alert('Em até 48 horas iremos aprovar sua solicitação de saque, talvez antes!');
+}
+
+// Updated generateMatches function
+function generateMatches() {
+  // Array of team combinations
+  const teams = [
+    // Premier League teams
+    ["Manchester City", "Liverpool"], ["Chelsea", "Arsenal"], ["Manchester United", "Tottenham"],
+    ["Newcastle", "Aston Villa"], ["Brighton", "West Ham"], ["Brentford", "Crystal Palace"],
+    
+    // La Liga teams  
+    ["Real Madrid", "Barcelona"], ["Atletico Madrid", "Sevilla"], ["Valencia", "Villarreal"],
+    ["Athletic Bilbao", "Real Sociedad"], ["Betis", "Osasuna"], ["Celta Vigo", "Mallorca"],
+    
+    // Serie A teams
+    ["Juventus", "Milan"], ["Inter", "Napoli"], ["Roma", "Lazio"],
+    ["Fiorentina", "Atalanta"], ["Bologna", "Sassuolo"], ["Torino", "Udinese"],
+    
+    // Brasileirão teams
+    ["Flamengo", "Palmeiras"], ["São Paulo", "Corinthians"], ["Santos", "Grêmio"],
+    ["Internacional", "Atlético-MG"], ["Fluminense", "Botafogo"], ["Vasco", "Cruzeiro"],
+    
+    // Add more team combinations as needed...
+  ];
+
+  // Generate 1000 matches with different dates and times
+  const matches = [];
+  const startDate = new Date();
+  
+  for(let i = 0; i < 1000; i++) {
+    // Random team pair
+    const teamPair = teams[Math.floor(Math.random() * teams.length)];
+    
+    // Random date within next 365 days
+    const matchDate = new Date(startDate);
+    matchDate.setDate(matchDate.getDate() + Math.floor(Math.random() * 365));
+    
+    // Random time
+    const hours = Math.floor(Math.random() * 12) + 11; // Between 11:00 and 23:00
+    const minutes = [0, 15, 30, 45][Math.floor(Math.random() * 4)]; // Only 00, 15, 30, 45
+    
+    matches.push({
+      home: teamPair[0],
+      away: teamPair[1],
+      date: matchDate.toLocaleDateString(),
+      time: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+    });
+  }
+
+  // Sort matches by date
+  matches.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const matchesContainer = document.getElementById('matches');
+  matchesContainer.innerHTML = matches.map((match, index) => `
+    <div class="col-md-6 mb-4 match-item">
+      <div class="bet-card card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">${match.home} vs ${match.away}</h5>
+            <div class="text-muted">
+              <small>${match.date}</small>
+              <br>
+              <small>${match.time}</small>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between gap-2">
+            <button class="btn btn-bet flex-grow-1" onclick="addBet(${index}, 'Home', 1.85, '${match.home}', '${match.away}')">
+              <div class="odds">1.85</div>
+              ${match.home}
+            </button>
+            <button class="btn btn-bet flex-grow-1" onclick="addBet(${index}, 'Draw', 3.50, '${match.home}', '${match.away}')">
+              <div class="odds">3.50</div>
+              Empate
+            </button>
+            <button class="btn btn-bet flex-grow-1" onclick="addBet(${index}, 'Away', 2.10, '${match.home}', '${match.away}')">
+              <div class="odds">2.10</div>
+              ${match.away}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Add search functionality
+  const searchInput = document.getElementById('searchGames');
+  searchInput.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const allMatches = document.querySelectorAll('.match-item');
+    
+    allMatches.forEach(match => {
+      const matchText = match.textContent.toLowerCase();
+      if (matchText.includes(searchTerm)) {
+        match.style.display = '';
+      } else {
+        match.style.display = 'none';
+      }
+    });
+  });
+}
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  generateMatches();
+});
+
+// Show My Bets function
+function showMyBets() {
+  const modal = document.createElement('div');
+  modal.className = 'auth-modal';
+  modal.style.display = 'block';
+  
+  let betsHtml = '';
+  if (userBets && userBets.length > 0) {
+    betsHtml = userBets.map(bet => `
+      <div class="card mb-2">
+        <div class="card-body">
+          <h6>${bet.home} vs ${bet.away}</h6>
+          <p>Aposta: ${bet.type} (Odd: ${bet.odd})</p>
+          <p>Valor: R$ ${bet.amount.toFixed(2)}</p>
+          <p>Retorno Possível: R$ ${(bet.amount * bet.odd).toFixed(2)}</p>
+          <p class="text-muted">Data: ${bet.date}</p>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    betsHtml = '<p class="text-center">Você ainda não fez nenhuma aposta.</p>';
+  }
+
+  modal.innerHTML = `
+    <div class="auth-content" style="max-width: 600px;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Minhas Apostas</h4>
+        <button type="button" class="btn-close" onclick="this.closest('.auth-modal').remove()"></button>
+      </div>
+      <div style="max-height: 70vh; overflow-y: auto;">
+        ${betsHtml}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+// Update the placeBet function to save bets
+function placeBet() {
+  if (!currentUser) {
+    alert('Por favor, faça login primeiro');
+    return;
+  }
+
+  const betAmount = parseFloat(document.getElementById('bet-amount').value);
+
+  if (!betAmount || betAmount <= 0) {
+    alert('Por favor, insira um valor válido para a aposta');
+    return;
+  }
+
+  if (betAmount > currentUser.balance) {
+    alert('Saldo insuficiente. Faça um depósito na sua conta para começar a usar o app');
+    return;
+  }
+
+  if (selectedBets.length === 0) {
+    alert('Selecione pelo menos uma aposta');
+    return;
+  }
+
+  // Calculate total bet amount
+  const totalBetAmount = betAmount * selectedBets.length;
+
+  if (totalBetAmount > currentUser.balance) {
+    alert('Saldo insuficiente para todas as apostas selecionadas');
+    return;
+  }
+
+  // Add bets to userBets array with current date
+  selectedBets.forEach(bet => {
+    userBets.push({
+      ...bet,
+      amount: betAmount,
+      date: new Date().toLocaleString()
+    });
+  });
+
+  // Update user balance
+  currentUser.balance -= totalBetAmount;
+  document.getElementById('balance').textContent = currentUser.balance.toFixed(2);
+
+  // Clear selected bets
+  selectedBets = [];
+  updateBetslip();
+  document.getElementById('bet-amount').value = '';
+
+  alert('Apostas realizadas com sucesso!');
+}
+
+function addBet(matchIndex, type, odd, home, away) {
+  if (!currentUser) {
+    alert('Por favor, faça login primeiro');
+    return;
+  }
+
+  const bet = {
+    matchIndex,
+    type,
+    odd,
+    home,
+    away
+  };
+
+  // Check if bet already exists
+  const existingBetIndex = selectedBets.findIndex(b => 
+    b.matchIndex === matchIndex && b.type === type
+  );
+
+  if (existingBetIndex >= 0) {
+    selectedBets.splice(existingBetIndex, 1);
+  } else {
+    selectedBets.push(bet);
+  }
+
+  updateBetslip();
+}
+
+function updateBetslip() {
+  const betslipItems = document.getElementById('betslip-items');
+  
+  if (selectedBets.length === 0) {
+    betslipItems.innerHTML = '<p class="text-center">Nenhuma aposta selecionada</p>';
+    return;
+  }
+
+  betslipItems.innerHTML = selectedBets.map((bet, index) => `
+    <div class="card mb-2">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-1">${bet.home} vs ${bet.away}</h6>
+            <p class="mb-0">Aposta: ${bet.type} (${bet.odd})</p>
+          </div>
+          <button class="btn btn-sm btn-danger" onclick="removeBet(${index})">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removeBet(index) {
+  selectedBets.splice(index, 1);
+  updateBetslip();
+}
+
+function showTransactions() {
+  const modal = document.createElement('div');
+  modal.className = 'auth-modal';
+  modal.style.display = 'block';
+
+  let transactionsHtml = '';
+  if (transactionHistory && transactionHistory.length > 0) {
+    transactionsHtml = transactionHistory.map(transaction => `
+      <div class="card mb-2">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6>${transaction.type}</h6>
+              <p class="text-muted mb-0">${transaction.description}</p>
+            </div>
+            <div>
+              <p class="mb-0 ${transaction.amount > 0 ? 'text-success' : 'text-danger'}">
+                R$ ${Math.abs(transaction.amount).toFixed(2)}
+              </p>
+              <small class="text-muted">${transaction.date}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    transactionsHtml = '<p class="text-center">Nenhuma transação encontrada.</p>';
+  }
+
+  modal.innerHTML = `
+    <div class="auth-content" style="max-width: 600px;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Histórico de Transações</h4>
+        <button type="button" class="btn-close" onclick="this.closest('.auth-modal').remove()"></button>
+      </div>
+      <div style="max-height: 70vh; overflow-y: auto;">
+        ${transactionsHtml}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+</script>
+
+</body>
+</html>
